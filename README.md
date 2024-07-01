@@ -68,6 +68,8 @@ Your Dockerfile now becomes a simple COPY operation:
 RUN npm install -g @remix-run/serve
 
 COPY ./standalone /app/standalone
+# required for remix-serve to serve client files
+COPY ./build /app/build 
 
 CMD ["remix-serve", "./standalone/packages/website/build/server/index.js"]
 

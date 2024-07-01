@@ -1,13 +1,14 @@
 import { NodeFileTraceReasons } from '@vercel/nft'
 import fs from 'fs'
 import { Sema } from 'async-sema'
-import path from 'path'
+import path, { isAbsolute } from 'path'
 import { searchForWorkspaceRoot } from 'vite'
 import { logger, toPosixPath } from './utils'
 
 export async function analyze({
     outputFolder = 'standalone',
     viteOutputs,
+    additionalFiles = [] as string[],
     root,
 }) {
     const base = toPosixPath(searchForWorkspaceRoot(root))
@@ -46,6 +47,13 @@ export async function analyze({
     const copiedFiles = new Set<string>()
 
     const files = [...result.fileList]
+
+    files.push(
+        ...additionalFiles.map((x) => {
+            return isAbsolute(x) ? path.relative(base, x) : x
+        }),
+    )
+
     const copySema = new Sema(10, { capacity: files.length })
 
     const outputPath = path.resolve(root, outputFolder)
@@ -56,7 +64,7 @@ export async function analyze({
         files.map(async (relativeFile) => {
             await copySema.acquire()
             // console.log(relativeFile)
-            const tracedFilePath = path.join(base, relativeFile)
+            const absFile = path.join(base, relativeFile)
             const fileOutputPath = path.join(outputPath, relativeFile)
             if (!fileOutputPath.startsWith(outputPath)) {
                 logger.log(
@@ -74,7 +82,7 @@ export async function analyze({
                     recursive: true,
                 })
                 const symlink = await fs.promises
-                    .readlink(tracedFilePath)
+                    .readlink(absFile)
                     .catch(() => null)
 
                 if (symlink) {
@@ -88,7 +96,7 @@ export async function analyze({
                     }
                 } else {
                     // logger.log(`copying ${tracedFilePath} to ${fileOutputPath}`)
-                    await fs.promises.copyFile(tracedFilePath, fileOutputPath)
+                    await fs.promises.copyFile(absFile, fileOutputPath)
                 }
             }
 

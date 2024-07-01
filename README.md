@@ -13,7 +13,7 @@
 npm install vite-plugin-nft
 ```
 
-## What does nft do?
+## What does `vite-plugin-nft` do?
 
 vite-plugin-nft is similar to [Next.js standalone](https://nextjs.org/docs/pages/api-reference/next-config-js/output#automatically-copying-traced-files) option: it automatically creates a standalone folder that copies only the necessary files for a production deployment including select files in node_modules.
 
@@ -62,14 +62,12 @@ For example if there is a pnpm workspace and your remix website is in `packages/
 Your Dockerfile now becomes a simple COPY operation:
 
 ```dockerfile
-
+# Dockerfile
 # ...
 
 RUN npm install -g @remix-run/serve
 
 COPY ./standalone /app/standalone
-
-RUN
 
 CMD ["remix-serve", "./standalone/packages/website/build/server/index.js"]
 

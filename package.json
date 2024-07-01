@@ -17,6 +17,11 @@
     "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
     "license": "ISC",
     "dependencies": {
-        "@vercel/nft": "^0.27.2"
+        "@vercel/nft": "^0.27.2",
+        "async-sema": "^3.1.1",
+        "vite": "*"
+    },
+    "devDependencies": {
+        "@types/node": "^20.14.9"
     }
 }

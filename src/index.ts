@@ -4,14 +4,14 @@ import { Plugin } from 'vite'
 import { analyze } from './analyze'
 import { logger, toPosixPath } from './utils'
 
-export const nft = (): Plugin => {
+export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
     let root = ''
     let outDir = ''
 
     let viteOutputs: string[] = []
 
     return {
-        name: 'vite-plugin-standalone',
+        name: 'vite-plugin-nft',
         apply(_, env) {
             return !!env.isSsrBuild
         },
@@ -49,9 +49,7 @@ export const nft = (): Plugin => {
             viteOutputs.push(file)
         },
         async closeBundle() {
-            await analyze({ viteOutputs, root })
+            await analyze({ viteOutputs, outputFolder, root })
         },
     }
 }
-
-

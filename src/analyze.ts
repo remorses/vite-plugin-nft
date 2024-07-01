@@ -5,8 +5,11 @@ import path from 'path'
 import { searchForWorkspaceRoot } from 'vite'
 import { logger, toPosixPath } from './utils'
 
-
-export async function analyze({ viteOutputs, root }) {
+export async function analyze({
+    outputFolder = 'standalone',
+    viteOutputs,
+    root,
+}) {
     const base = toPosixPath(searchForWorkspaceRoot(root))
 
     logger.log(`starting analyzing with nft ${viteOutputs}, `)
@@ -25,13 +28,13 @@ export async function analyze({ viteOutputs, root }) {
 
     // We are done, no native dependencies need to be copied
     if (!result.fileList.size) {
-        logger.log(`no standalone files to copy`)
+        logger.log(`no nft files to copy`)
         return
     }
 
     if (result.warnings.size && isYarnPnP()) {
         throw new Error(
-            'Standalone build is not supported when using Yarn PnP and native dependencies.',
+            'nft build is not supported when using Yarn PnP and native dependencies.',
         )
     }
 
@@ -45,7 +48,7 @@ export async function analyze({ viteOutputs, root }) {
     const files = [...result.fileList]
     const copySema = new Sema(10, { capacity: files.length })
 
-    const outputPath = path.resolve(root, 'standalone')
+    const outputPath = path.resolve(root, outputFolder)
     await fs.promises
         .rm(outputPath, { recursive: true, force: true })
         .catch(() => null)
@@ -92,9 +95,8 @@ export async function analyze({ viteOutputs, root }) {
             await copySema.release()
         }),
     )
-    logger.log(`finished copying standalone files`)
+    logger.log(`finished copying nft files`)
 }
-
 
 function isYarnPnP(): boolean {
     try {

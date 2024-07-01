@@ -8,8 +8,6 @@ export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
     let root = ''
     let outDir = ''
 
-    let viteOutputs: string[] = []
-
     return {
         name: 'vite-plugin-nft',
         apply(_, env) {
@@ -46,10 +44,7 @@ export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
             }
             const file = path.resolve(x.dir, x.entryFileNames)
             logger.log(`found bundle ${file}`)
-            viteOutputs.push(file)
-        },
-        async closeBundle() {
-            await analyze({ viteOutputs, outputFolder, root })
+            await analyze({ viteOutputs: [file], outputFolder, root })
         },
     }
 }

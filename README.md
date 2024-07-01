@@ -2,7 +2,7 @@
     <br/>
     <br/>
     <h3>vite-plugin-nft</h3>
-    <p>Next.js standalone for Vite</p>
+    <p>Next.js standalone implementation for Vite</p>
     <br/>
     <br/>
 </div>

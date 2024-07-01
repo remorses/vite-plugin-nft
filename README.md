@@ -7,15 +7,25 @@
     <br/>
 </div>
 
+## Installation
+
+```bash
+npm install vite-plugin-nft
+```
+
+## What does nft do?
+
+vite-plugin-nft is similar to [Next.js standalone](https://nextjs.org/docs/pages/api-reference/next-config-js/output#automatically-copying-traced-files) option: it automatically creates a standalone folder that copies only the necessary files for a production deployment including select files in node_modules.
+
+This is useful when you want to create a Docker image for a monorepo without having to install the whole monorepo inside the Dockerfile. Instead you can just copy the standalone directory.
+
+The vite plugin basically waits for the ssr build to finish and then copies the necessary files to the output folder. It uses the @vercel/nft package to do the file tracing.
+
 ## Usage in Remix
 
 ```ts
 import { nft } from 'vite-plugin-nft'
-
-import {
-    vitePlugin as remix,
-    cloudflareDevProxyVitePlugin as remixCloudflareDevProxy,
-} from '@remix-run/dev'
+import { vitePlugin as remix } from '@remix-run/dev'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
@@ -47,4 +57,20 @@ For example if there is a pnpm workspace and your remix website is in `packages/
 +    "start": "remix-serve ./standalone/packages/website/build/server/index.js",
     "typecheck": "tsc"
   },
+```
+
+Your Dockerfile now becomes a simple COPY operation:
+
+```dockerfile
+
+# ...
+
+RUN npm install -g @remix-run/serve
+
+COPY ./standalone /app/standalone
+
+RUN
+
+CMD ["remix-serve", "./standalone/packages/website/build/server/index.js"]
+
 ```

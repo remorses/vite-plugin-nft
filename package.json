@@ -1,0 +1,22 @@
+{
+    "name": "vite-plugin-nft",
+    "version": "0.0.0",
+    "description": "Create a folder with all your ssr vite dependencies using @vercel/nft, same as the Next.js standalone option",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc ",
+        "watch": "tsc -w"
+    },
+    "files": [
+        "dist",
+        "src",
+        "esm"
+    ],
+    "keywords": [],
+    "author": "Tommaso De Rossi, morse <beats.by.morse@gmail.com>",
+    "license": "ISC",
+    "dependencies": {
+        "@vercel/nft": "^0.27.2"
+    }
+}

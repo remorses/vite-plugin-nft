@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "target": "ES2017",
+        "rootDir": "src",
+        "outDir": "dist",
+        "useUnknownInCatchVariables": false,
+        "module": "CommonJS",
+        "allowJs": true,
+        "moduleResolution": "Node",
+        "lib": [
+            "es2020",
+            "es7",
+            "es6",
+            "ESNext",
+            // "dom"
+        ],
+        "declaration": true,
+        "downlevelIteration": true,
+        "declarationMap": true,
+        "strict": false,
+        "esModuleInterop": true,
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "jsx": "react",
+        "skipLibCheck": true,
+    },
+}

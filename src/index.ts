@@ -26,7 +26,7 @@ export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
             // if config.ssr.noExternal is true, alert the user it should not be, because this way nft trace will take ages
             if (config.ssr?.noExternal) {
                 logger.log(
-                    'Warning: config.ssr.noExternal is true, this will make vite-plugin-nft trace much slower and unnecessary',
+                    'Warning: config.ssr.noExternal is true, this makes vite-plugin-nft useless and nft tracing becomes much slower',
                 )
             }
             return {}

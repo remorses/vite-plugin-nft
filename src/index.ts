@@ -31,6 +31,15 @@ export const standalone = (): Plugin => {
             root = toPosixPath(config.root)
             outDir = toPosixPath(config.build.outDir)
         },
+        config(config) {
+            // if config.ssr.noExternal is true, alert the user it should not be, because this way nft trace will take ages
+            if (config.ssr?.noExternal) {
+                logger.log(
+                    'Warning: config.ssr.noExternal is true, this will make vite-plugin-nft trace much slower and unnecessary',
+                )
+            }
+            return {}
+        },
         async writeBundle(x, bundle) {
             if (!x.dir) {
                 logger.log(`no dir ${JSON.stringify({ x }, null, 2)}`)

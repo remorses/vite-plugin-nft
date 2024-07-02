@@ -4,10 +4,12 @@ import fs from 'fs'
 import path, { isAbsolute } from 'path'
 import { logger, toPosixPath } from './utils.js'
 import { searchForWorkspaceRoot } from 'vite'
+import { Minimatch, minimatch } from 'minimatch'
 
 export async function analyze({
     outputFolder = 'standalone',
     viteOutputs,
+    ignore = [] as string[],
     additionalFiles = [] as string[],
     root,
 }) {
@@ -20,7 +22,8 @@ export async function analyze({
     const result = await nodeFileTrace(viteOutputs, {
         base,
         mixedModules: true,
-        ts: false,
+
+        // ts: false,
         // readFile(path) {
         //     console.log(path)
         //     return fs.readFileSync(path, 'utf8')
@@ -43,28 +46,31 @@ export async function analyze({
     for (const file of result.esmFileList) {
         fileList.add(file)
     }
+    result.warnings.forEach((warning) => {
+        logger.log('warning: ', warning.message)
+    })
+    result.reasons
 
     const copiedFiles = new Set<string>()
 
-    const files = [...result.fileList]
+    for (const file of additionalFiles) {
+        fileList.add(isAbsolute(file) ? path.relative(base, file) : file)
+    }
 
-    files.push(
-        ...additionalFiles.map((x) => {
-            return isAbsolute(x) ? path.relative(base, x) : x
-        }),
-    )
-
-    const copySema = new Sema(10, { capacity: files.length })
+    const copySema = new Sema(10, { capacity: fileList.size })
 
     const outputPath = path.resolve(root, outputFolder)
     await fs.promises
         .rm(outputPath, { recursive: true, force: true })
         .catch(() => null)
+
+    const filtered = ignoreFiles({ files: [...fileList], ignore })
     await Promise.all(
-        files.map(async (relativeFile) => {
+        filtered.map(async (relativeFile) => {
             await copySema.acquire()
             // console.log(relativeFile)
             const absFile = path.join(base, relativeFile)
+
             const fileOutputPath = path.join(outputPath, relativeFile)
             if (!fileOutputPath.startsWith(outputPath)) {
                 logger.log(
@@ -166,4 +172,26 @@ export function getFilesMapFromReasons(
         propagateToParents(reason.parents, file)
     }
     return parentFilesMap
+}
+
+export function ignoreFiles({ files, ignore }) {
+    let excludeGlobs = ignore.map(
+        (pattern) =>
+            new Minimatch(pattern, {
+                dot: true,
+                // matchBase: true,
+                magicalBraces: true,
+                // partial: true,
+                // debug: true,
+                // nobrace: true,
+                // partial: true,
+            }),
+    )
+    return files.filter((file) => {
+        if (excludeGlobs.some((glob) => glob.match(file))) {
+            logger.log(`ignoring ${file}`)
+            return false
+        }
+        return true
+    })
 }

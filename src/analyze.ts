@@ -23,23 +23,11 @@ export async function analyze({
         base,
         mixedModules: true,
 
-        // ts: false,
-        // readFile(path) {
-        //     console.log(path)
-        //     return fs.readFileSync(path, 'utf8')
-        // },
     })
 
-    // We are done, no native dependencies need to be copied
     if (!result.fileList.size) {
         logger.log(`no nft files to copy`)
         return
-    }
-
-    if (result.warnings.size && isYarnPnP()) {
-        throw new Error(
-            'nft build is not supported when using Yarn PnP and native dependencies.',
-        )
     }
 
     const fileList = result.fileList
@@ -49,7 +37,6 @@ export async function analyze({
     result.warnings.forEach((warning) => {
         logger.log('warning: ', warning.message)
     })
-    result.reasons
 
     const copiedFiles = new Set<string>()
 
@@ -110,68 +97,6 @@ export async function analyze({
         }),
     )
     logger.log(`finished copying nft files`)
-}
-
-function isYarnPnP(): boolean {
-    try {
-        require('pnpapi')
-        return true
-    } catch {
-        return false
-    }
-}
-
-export function getFilesMapFromReasons(
-    fileList: Set<string>,
-    reasons: NodeFileTraceReasons,
-    ignoreFn?: (file: string, parent?: string) => Boolean,
-) {
-    // this uses the reasons tree to collect files specific to a
-    // certain parent allowing us to not have to trace each parent
-    // separately
-    const parentFilesMap = new Map<string, Map<string, { ignored: boolean }>>()
-
-    function propagateToParents(
-        parents: Set<string>,
-        file: string,
-        seen = new Set<string>(),
-    ) {
-        for (const parent of parents || []) {
-            if (!seen.has(parent)) {
-                seen.add(parent)
-                let parentFiles = parentFilesMap.get(parent)
-
-                if (!parentFiles) {
-                    parentFiles = new Map()
-                    parentFilesMap.set(parent, parentFiles)
-                }
-                const ignored = Boolean(ignoreFn?.(file, parent))
-                parentFiles.set(file, { ignored })
-
-                const parentReason = reasons.get(parent)
-
-                if (parentReason?.parents) {
-                    propagateToParents(parentReason.parents, file, seen)
-                }
-            }
-        }
-    }
-
-    for (const file of fileList!) {
-        const reason = reasons!.get(file)
-        const isInitial =
-            reason?.type.length === 1 && reason.type.includes('initial')
-
-        if (
-            !reason ||
-            !reason.parents ||
-            (isInitial && reason.parents.size === 0)
-        ) {
-            continue
-        }
-        propagateToParents(reason.parents, file)
-    }
-    return parentFilesMap
 }
 
 export function ignoreFiles({ files, ignore }) {

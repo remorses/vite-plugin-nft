@@ -1,13 +1,13 @@
 {
     "name": "vite-plugin-nft",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "type": "module",
     "description": "Create a folder with all your ssr vite dependencies using @vercel/nft, same as the Next.js standalone option",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "rm -rf dist && tsc",
-        "prepublishOnly": "tsc",
+        "prepublishOnly": "pnpm build",
         "watch": "tsc -w"
     },
     "files": [
@@ -21,8 +21,6 @@
     "dependencies": {
         "@vercel/nft": "^0.27.2",
         "async-sema": "^3.1.1",
-        "fast-glob": "^3.3.2",
-        "micromatch": "^4.0.7",
         "minimatch": "^9.0.5",
         "vite": "*"
     },

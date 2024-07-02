@@ -4,7 +4,10 @@ import { Plugin } from 'vite'
 import { analyze } from './analyze.js'
 import { logger, toPosixPath } from './utils.js'
 
-export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
+export const nft = ({
+    outputFolder = 'standalone',
+    ignore = [] as string[],
+} = {}): Plugin => {
     let root = ''
     let outDir = ''
 
@@ -44,7 +47,7 @@ export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
             }
             const file = path.resolve(x.dir, x.entryFileNames)
             logger.log(`found bundle ${file}`)
-            await analyze({ viteOutputs: [file], outputFolder, root })
+            await analyze({ viteOutputs: [file], outputFolder, ignore, root })
         },
     }
 }

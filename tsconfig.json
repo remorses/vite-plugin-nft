@@ -1,12 +1,14 @@
 {
     "compilerOptions": {
-        "target": "ES2017",
+        "target": "ESNext",
         "rootDir": "src",
         "outDir": "dist",
+
+
         "useUnknownInCatchVariables": false,
-        "module": "CommonJS",
+        "module": "NodeNext",
         "allowJs": true,
-        "moduleResolution": "Node",
+        "moduleResolution": "NodeNext",
         "lib": [
             "es2020",
             "es7",
@@ -14,6 +16,8 @@
             "ESNext",
             // "dom"
         ],
+        
+        "allowSyntheticDefaultImports": true,
         "declaration": true,
         "downlevelIteration": true,
         "declarationMap": true,

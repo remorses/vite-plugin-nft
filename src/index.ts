@@ -1,8 +1,8 @@
 import path from 'path'
 import { Plugin } from 'vite'
 
-import { analyze } from './analyze'
-import { logger, toPosixPath } from './utils'
+import { analyze } from './analyze.js'
+import { logger, toPosixPath } from './utils.js'
 
 export const nft = ({ outputFolder = 'standalone' } = {}): Plugin => {
     let root = ''

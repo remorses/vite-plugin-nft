@@ -1,9 +1,9 @@
 import { NodeFileTraceReasons } from '@vercel/nft'
-import fs from 'fs'
 import { Sema } from 'async-sema'
+import fs from 'fs'
 import path, { isAbsolute } from 'path'
+import { logger, toPosixPath } from './utils.js'
 import { searchForWorkspaceRoot } from 'vite'
-import { logger, toPosixPath } from './utils'
 
 export async function analyze({
     outputFolder = 'standalone',

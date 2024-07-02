@@ -69,8 +69,8 @@ WORKDIR /app
 
 RUN echo "{\"type\":\"module\"}" > package.json
 
-# install any required native dependencies, as native addons are not copied due to potential incompatibility
-RUN npm install pg
+# install any required native dependencies
+RUN npm install canvas
 
 RUN npm install -g @remix-run/serve
 
@@ -80,4 +80,13 @@ COPY ./build /app/build
 
 CMD ["remix-serve", "./standalone/packages/website/build/server/index.js"]
 
+```
+
+If you use native dependencies with this approach, you will need to install them inside the Dockerfile and add them to your .dockerfile, so the wrong binaries are not copied from the standalone directory
+
+
+```
+# .dockerignore
+**/node_modules/canvas
+**/node_modules/@prisma
 ```

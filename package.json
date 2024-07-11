@@ -22,7 +22,7 @@
         "@vercel/nft": "^0.27.2",
         "async-sema": "^3.1.1",
         "minimatch": "^9.0.5",
-        "vite": "*"
+        "vite": "^5.3.3"
     },
     "devDependencies": {
         "@types/micromatch": "^4.0.9",
